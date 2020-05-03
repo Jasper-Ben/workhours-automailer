@@ -1,0 +1,18 @@
+[Unit]
+Description=Workhours_automailer: automatically sends an e-mail to your supervisor with your weeks working hours. Run workhours_automailer.sh -h for help.
+OnFailure=/usr/bin/sendmail -t <<ERRMAIL
+To: '<EMAIL>'
+From: systemd <root@$HOSTNAME>
+Subject: Error running workhours_automailer
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+
+$(systemctl status --full workhours_automailer.service)
+ERRMAIL
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/workhours_automailer.sh [OPTIONS] -s '<URL>' -u '<ID>' -p '<PASSWORD>' -f '<EMAIL>' -t '<EMAIL>' -n '<NAME>'
+
+[Install]
+WantedBy=default.target
