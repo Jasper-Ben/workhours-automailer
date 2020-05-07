@@ -176,9 +176,9 @@ cat >>/tmp/"$FILE_NAME".html <<EOF
 EOF
 
 # sending the mail
-[[ "$DRY_RUN" = "1" ]] && export TO="$FROM"
-[[ "$COPY" = "1" ]] && export COPY="--mail-rcpt $FROM"
-curl -sS "$INSECURE" smtp://"$SERVER":587 --mail-from "$FROM" --mail-rcpt "$TO" "$COPY" --ssl -u "$USER":"$PASSWORD" -T <(echo -e "From: $FROM\nTo: $TO\nSubject: $FROM_NAME Arbeitszeit Home Office KW$(date +%W)\nContent-Type: text/html; charset="utf8"\n\n$(cat /tmp/"$FILE_NAME".html)") || { echo "Error: Could not send mail. Aborting..." >&2; exit 1; }
+[[ "$DRY_RUN" = "1" ]] && TO="$FROM"
+[[ "$COPY" = "1" ]] && COPY="--mail-rcpt $FROM"
+curl -sS $INSECURE smtp://$SERVER:587 --mail-from $FROM --mail-rcpt $TO $COPY --ssl -u $USER:$PASSWORD -T <(echo -e "From: $FROM\nTo: $TO\nSubject: $FROM_NAME Arbeitszeit Home Office KW$(date +%W)\nContent-Type: text/html; charset="utf8"\n\n$(cat /tmp/"$FILE_NAME".html)") || { echo "Error: Could not send mail. Aborting..." >&2; exit 1; }
 rm -f /tmp/"$FILE_NAME".html
 
 exit 0
