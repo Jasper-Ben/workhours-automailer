@@ -45,7 +45,7 @@ print_help(){
     echo "  -p '<PASSWORD>'             sets the SMTP login Password"
     echo "  -n '<FROM_NAME>'            sets the Signature Name of the Employee"
     echo "OPTIONAL ARGUMENTS:"
-    echo "  -i                          allow for untrusted TLS certificates"
+    echo "  -i                          disable TLS encryption"
     echo "  -d                          dry run, overwrites receiver mail with sender mail for test-purposes"
     echo "  -c                          send a copy of the mail to the sender as BCC"
     echo "  -h                          prints this help"
@@ -105,7 +105,7 @@ while getopts "s:u:p:t:f:n:idhc" arg; do
         p)
             export PASSWORD="$OPTARG";;
         i)
-            export INSECURE="--insecure";;
+            export INSECURE="1";;
         n)
             export FROM_NAME="$OPTARG";;
         c)
@@ -178,7 +178,8 @@ EOF
 # sending the mail
 [[ "$DRY_RUN" = "1" ]] && TO="$FROM"
 [[ "$COPY" = "1" ]] && COPY="--mail-rcpt $FROM"
-curl -sS $INSECURE smtp://$SERVER:587 --mail-from $FROM --mail-rcpt $TO $COPY --ssl -u $USER:$PASSWORD -T <(echo -e "From: $FROM\nTo: $TO\nSubject: $FROM_NAME Arbeitszeit Home Office KW$(date +%W)\nContent-Type: text/html; charset="utf8"\n\n$(cat /tmp/"$FILE_NAME".html)") || { echo "Error: Could not send mail. Aborting..." >&2; exit 1; }
+[[ "$INSECURE" != "1" ]] && SSL="--ssl"
+curl -sS $SSL smtp://$SERVER:587 --mail-from $FROM --mail-rcpt $TO $COPY -u $USER:$PASSWORD -T <(echo -e "From: $FROM\nTo: $TO\nSubject: $FROM_NAME Arbeitszeit Home Office KW$(date +%W)\nContent-Type: text/html; charset="utf8"\n\n$(cat /tmp/"$FILE_NAME".html)") || { echo "Error: Could not send mail. Aborting..." >&2; exit 1; }
 rm -f /tmp/"$FILE_NAME".html
 
 exit 0
