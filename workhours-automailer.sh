@@ -140,7 +140,7 @@ FILE_NAME="auto_mail_$(date +%Y%m%d_%H%M%S)"
 
 cat >/tmp/"$FILE_NAME".html <<EOF
 <h3>Arbeitszeiterfassung im Homeoffice für $FROM_NAME</h3>
-<h4>Kalenderwoche $(date +%W)</h4>
+<h4>Kalenderwoche $(date +%V)</h4>
 
 <p>In der laufenden Woche waren meine (bisherigen) Arbeitszeiten im Homeoffice wie folgt:</p>
 
